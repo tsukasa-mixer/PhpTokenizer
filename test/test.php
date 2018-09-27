@@ -43,5 +43,9 @@ $time2 *= 100;
 
 print_r($c1);
 
+var_dump(
+    memory_get_peak_usage(true) / 1024,
+    memory_get_usage(true) / 1024
+);
 echo "getPhpContent - {$time1}\n";
 echo "getTokensNative - {$time2}\n";

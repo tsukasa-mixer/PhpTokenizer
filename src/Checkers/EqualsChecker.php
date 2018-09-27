@@ -14,7 +14,7 @@ class EqualsChecker implements CheckerInterface
     protected $default;
     protected $filter;
 
-    public function __construct(array $equals, $default, \Closure $filter = null)
+    public function __construct(array $equals, $default = null, \Closure $filter = null)
     {
         foreach ($equals as $type => $equal) {
             if (!is_array($equal)) {
