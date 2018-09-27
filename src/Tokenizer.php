@@ -42,15 +42,12 @@ class Tokenizer {
         $types = [];
         $rules = [];
 
-        foreach ($this->ruleset->getPatterns($ruleset) as $type => $pattern) {
+        foreach ($this->ruleset->getPatterns($ruleset) as $type => $pattern)
+        {
+            $rule = null;
 
             if (is_array($pattern)) {
-                $rule = $pattern[1];
-                $pattern= $pattern[0];
-            }
-            else {
-                $rule = null;
-                $pattern = $pattern;
+                list($pattern, $rule) = $pattern;
             }
 
             $type = $type = !is_numeric($type)
