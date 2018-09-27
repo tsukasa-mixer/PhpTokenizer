@@ -1,0 +1,17 @@
+{
+    "name": "tsukasa/php-tokenizer",
+    "description": "",
+    "license": "MIT",
+    "require": {
+        "roave/security-advisories": "dev-master"
+    },
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Tsukasa\\PhpTokenizer\\": "src/"
+        },
+        "files": [
+            "src/tokenizer_polyfill.php"
+        ]
+    }
+}
