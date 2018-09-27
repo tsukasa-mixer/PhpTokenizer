@@ -166,9 +166,8 @@ class Rules implements RulesInterface {
     {
         $this->patterns = [
             'base' => [
-                ['\<\?.*?\?\>', 'php-tokens'],
-                ['\<\?.*?$', 'php-tokens'],
-                'T_INLINE_HTML' => ['.'],
+                [['\<\?.*?\?\>','\<\?.*?$'], 'php-tokens'],
+                'T_INLINE_HTML' => [['([\w\d\s]+)','.']],
             ],
             'php-tokens' => [
                 'T_OPEN_TAG_1' => '\<\?php',
