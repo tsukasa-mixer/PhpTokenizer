@@ -168,43 +168,60 @@ class Rules implements RulesInterface {
     ];
 
 
-    public $patterns = [
-        'base' => [
-            'T_CLOSE_TAG' => '\?\>',
-            'T_OPEN_TAG' => '\<\?php|\<\?',
-            'T_OPEN_TAG_WITH_ECHO' => '\<\?\=',
-            ['.*', 'php'],
-        ],
+    protected $patterns;
 
-        'php' => [
-            'T_CLOSE_TAG' => '\?\>',
-            'T_OBJECT_OPERATOR' => '\-\>',
-            'T_VAR' => '\$\w[\w\d_]+',
-            'T_STRING' => '\w[\w\d]+',
-            'T_WHITESPACE' => '[\t \r\n]+',
-            'T_REQUIRE_ONCE' => 'require_once',
-            'T_INCLUDE_ONCE' => 'include_once',
-            'T_REQUIRE' => 'require',
-            'T_INCLUDE' => 'include',
-            'T_CONSTANT_ENCAPSED_STRING_1' => '\'.+\'',
-            'T_CONSTANT_ENCAPSED_STRING_2' => '".+"',
 
-            '.',
-        ],
+    protected $map = [
+        'T_CONSTANT_ENCAPSED_STRING_1' => 'T_CONSTANT_ENCAPSED_STRING',
+        'T_CONSTANT_ENCAPSED_STRING_2' => 'T_CONSTANT_ENCAPSED_STRING',
+        'T_OPEN_TAG_1' => 'T_OPEN_TAG',
+        'T_OPEN_TAG_2' => 'T_OPEN_TAG',
+    ];
 
-        'php_encapsed_string' => [
+    public function __construct()
+    {
+        $this->patterns = [
+            'base' => [
+                [Pattern::fabric('\<\?.*?\?\>'), 'php-tokens'],
+                [Pattern::fabric('\<\?.*?$'), 'php-tokens'],
+//            'T_INLINE_HTML' => '.',
+                '.'
+            ],
+            'php-tokens' => [
+                'T_OPEN_TAG_1' => Pattern::fabric('\<\?php'),
+                'T_OPEN_TAG_WITH_ECHO' => Pattern::fabric('\<\?\='),
+                'T_OPEN_TAG_2' => '\<\?',
+                'T_OBJECT_OPERATOR' => '\-\>',
+                'T_VARIABLE' => '\$\w[\w\d_]+',
+                'T_STRING' => ['\w[\w\d]+', new EqualsChecker([
+                    'T_REQUIRE_ONCE' => 'require_once',
+                    'T_INCLUDE_ONCE' => 'include_once',
+                    'T_REQUIRE' => 'require',
+                    'T_INCLUDE' => 'include',
+                    ], 'T_STRING')
+                ],
+                'T_CONSTANT_ENCAPSED_STRING_2' => '".+"',
+                'T_CONSTANT_ENCAPSED_STRING_1' => '\'.+\'',
+                'T_WHITESPACE' => '[\t \r\n]+',
+                'T_CLOSE_TAG' => '\?\>',
+                '\W',
+                '.',
+            ],
+
+            'php' => [
+                'T_REQUIRE_ONCE' => 'require_once',
+                'T_INCLUDE_ONCE' => 'include_once',
+                'T_REQUIRE' => 'require',
+                'T_INCLUDE' => 'include',
+            ],
+
+            'php_encapsed_string' => [
 //            ['{}']
 //            'T_CURLY_OPEN' => '{',
 //            'T_VAR' => '\$\w[\w\d_]+',
-        ]
-    ];
-
-
-    public $map = [
-        'T_CONSTANT_ENCAPSED_STRING_1' => 'T_CONSTANT_ENCAPSED_STRING',
-        'T_CONSTANT_ENCAPSED_STRING_2' => 'T_CONSTANT_ENCAPSED_STRING',
-    ];
-
+            ]
+        ];
+    }
 
 
     public function getPatterns($set = null)
@@ -221,5 +238,10 @@ class Rules implements RulesInterface {
     public function getMap()
     {
         return $this->map;
+    }
+
+    public function getTokensPattern()
+    {
+        return '(\<\?php)|(\<\?=)|(\<\?)|(\$)|(\w[\w\d]+)|(\".*\")|([ \n\t\r]+)|(\?\>)|(\W)|(.)';
     }
 }

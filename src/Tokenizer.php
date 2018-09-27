@@ -26,18 +26,21 @@ class Tokenizer {
 
         $result = [];
 
-        if (preg_match_all('/(\<\?(php|\=|)).*?(\?\>|$)/s', $content, $match)) {
+//        if (preg_match_all('/(\<\?(php|\=|)).*?(\?\>|$)/s', $content, $match)) {
+//
+//            $len = 0;
+//            foreach ($match[0] as $i => $code) {
+//                $str = $code;
+//                $len += strlen($str);
+//                list($line, $col) = self::getCoordinates($content, $len);
+//
+//                $result[] = $this->tokenize($code, $line);
+//            }
+//        }
 
-            $len = 0;
-            foreach ($match[0] as $i => $code) {
-                $str = $code;
-                $len += strlen($str);
-                list($line, $col) = self::getCoordinates($content, $len);
+        $result = $this->tokenize($content);
 
-                $result[] = $this->tokenize($code, $line);
-            }
-
-        }
+        return $result;
 
         if (count($result) <= 1) {
             return current($result);
@@ -110,26 +113,28 @@ class Tokenizer {
                 $type = $this->map[$type];
             }
 
-            if ($rule) {
-                $result = array_merge($result,
-                    $this->tokenize($str, $line, $rule)
-                );
+            if ($rule instanceof CheckerInterface) {
+                $type = $rule->check($str);
             }
-            else {
-                $result[] = defined($type)
-                    ? [ constant($type), $str, $line, $type]
-                    : $str;
+            elseif ($rule) {
+                $result[] = $this->tokenize($str, $line, $rule);
+                continue;
             }
 
-
+            $result[] = [
+                isset(Helper::$constants[$type])
+                    ? [ Helper::$constants[$type], $str, $line, $type]
+                    : $str
+            ];
         }
+
         if ($len !== strlen($input)) {
 
             list($line, $col) = static::getCoordinates($input, $len);
             $token = str_replace("\n", '\n', substr($input, $len, 10));
             throw new \RuntimeException("Unexpected '$token' on line $line, column $col.");
         }
-        return $result;
+        return array_merge(...$result);
     }
 
 

@@ -3,7 +3,8 @@
     "description": "",
     "license": "MIT",
     "require": {
-        "roave/security-advisories": "dev-master"
+      "roave/security-advisories": "dev-master",
+      "ext-mbstring": "*"
     },
     "type": "library",
     "autoload": {
