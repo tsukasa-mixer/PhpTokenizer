@@ -151,25 +151,6 @@ class Rules implements RulesInterface {
         'T_DOUBLE_COLON' => '',
     ];
 
-    public $minimal = [
-        'T_OPEN_TAG' => '<?php|<?',
-        'T_OPEN_TAG_WITH_ECHO' => '<?=',
-        'T_CLOSE_TAG' => '?>',
-
-        'T_REQUIRE_ONCE' => 'require_once',
-        'T_INCLUDE_ONCE' => 'include_once',
-        'T_REQUIRE' => 'require',
-        'T_INCLUDE' => 'include',
-        'T_CONSTANT_ENCAPSED_STRING_1' => '\'.*?\'',
-        'T_CONSTANT_ENCAPSED_STRING_2' => '".*?"',
-        'T_VAR' => '\$\w[\w\d_]+',
-        'T_STRING' => '\w[\w\d]+',
-        'T_WHITESPACE' => '[\t \r\n]+',
-        'T_ANY' => '.',
-
-        'T_INLINE_HTML' => '.*',
-    ];
-
 
     protected $patterns;
 
@@ -194,21 +175,21 @@ class Rules implements RulesInterface {
             'base' => [
                 ['\<\?.*?\?\>', 'php-tokens'],
                 ['\<\?.*?$', 'php-tokens'],
-                'T_INLINE_HTML' => ['.', ],
+                'T_INLINE_HTML' => ['.'],
             ],
             'php-tokens' => [
                 'T_OPEN_TAG_1' => '\<\?php',
                 'T_OPEN_TAG_WITH_ECHO' => '\<\?\=',
                 'T_OPEN_TAG_2' => '\<\?',
                 'T_DOC_COMMENT' => '\/\*\*.+?\*\/',
+                'T_COMMENT' => '//.+\n',
                 'T_OBJECT_OPERATOR' => '\-\>',
                 'T_VARIABLE' => '\$\w[\w\d_]+',
                 'T_STRING' => ['\w[\w\d]+', 'php-T_STRING'],
-                'T_CONSTANT_ENCAPSED_STRING_2' => '".*?"',
+                'T_CONSTANT_ENCAPSED_STRING_2' => ['".*?"'],
                 'T_CONSTANT_ENCAPSED_STRING_1' => '\'.*?\'',
                 'T_WHITESPACE' => '[\t \r\n]+',
                 'T_CLOSE_TAG' => '\?\>',
-                '\W',
                 '.',
             ],
 
@@ -233,12 +214,6 @@ class Rules implements RulesInterface {
                     'T_INCLUDE' => 'include',
                 ], 'T_STRING')],
             ],
-
-            'php_encapsed_string' => [
-//            ['{}']
-//            'T_CURLY_OPEN' => '{',
-//            'T_VAR' => '\$\w[\w\d_]+',
-            ]
         ];
     }
 
@@ -257,10 +232,5 @@ class Rules implements RulesInterface {
     public function getMap()
     {
         return $this->map;
-    }
-
-    public function getTokensPattern()
-    {
-        return '(\<\?php)|(\<\?=)|(\<\?)|(\$)|(\w[\w\d]+)|(\".*\")|([ \n\t\r]+)|(\?\>)|(\W)|(.)';
     }
 }
