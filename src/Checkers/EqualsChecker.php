@@ -10,22 +10,35 @@ namespace Tsukasa\PhpTokenizer\Checkers;
 
 class EqualsChecker implements CheckerInterface
 {
-    protected $equals;
+    protected $equals = [];
     protected $default;
+    protected $filter;
 
-    public function __construct(array $equals, $default)
+    public function __construct(array $equals, $default, \Closure $filter = null)
     {
-        $this->equals = array_map('strtolower', $equals);
+        foreach ($equals as $type => $equal) {
+            if (!is_array($equal)) {
+                $equal = [$equal];
+            }
+            foreach ($equal as $item) {
+                $this->equals[$item] = $type;
+            }
+        }
+
         $this->default = $default;
+        $this->filter = $filter;
     }
 
     public function check($value)
     {
+        if ($this->filter) {
+            $value = call_user_func($this->filter, $value);
+        }
+
         $val = mb_strtolower($value);
 
-        if (in_array($val, $this->equals)) {
-            $equals = array_flip($this->equals);
-            return $equals[$val];
+        if (array_key_exists($val, $this->equals)) {
+            return $this->equals[$val];
         }
 
         return $this->default;

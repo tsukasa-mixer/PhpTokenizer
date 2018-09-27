@@ -160,13 +160,6 @@ class Rules implements RulesInterface {
         'T_CONSTANT_ENCAPSED_STRING_2' => 'T_CONSTANT_ENCAPSED_STRING',
         'T_OPEN_TAG_1' => 'T_OPEN_TAG',
         'T_OPEN_TAG_2' => 'T_OPEN_TAG',
-        'T_INT_CAST_1' => 'T_INT_CAST',
-        'T_INT_CAST_2' => 'T_INT_CAST',
-        'T_BOOL_CAST_1' => 'T_BOOL_CAST',
-        'T_BOOL_CAST_2' => 'T_BOOL_CAST',
-        'T_DOUBLE_CAST_1' => 'T_DOUBLE_CAST',
-        'T_DOUBLE_CAST_2' => 'T_DOUBLE_CAST',
-        'T_DOUBLE_CAST_3' => 'T_DOUBLE_CAST',
     ];
 
     public function __construct()
@@ -194,19 +187,20 @@ class Rules implements RulesInterface {
             ],
 
             'php-T_STRING' => [
-                ['\(\s*\w+\s*\)', new CastEqualsChecker([
-                    'T_INT_CAST_1' => '(int)',
-                    'T_INT_CAST_2' => '(integer)',
-                    'T_OBJECT_CAST' => '(object)',
-                    'T_STRING_CAST' => '(string)',
-                    'T_UNSET_CAST' => '(unset)',
-                    'T_ARRAY_CAST' => '(unset)',
-                    'T_BOOL_CAST_1' => '(bool)',
-                    'T_BOOL_CAST_2' => '(boolean)',
-                    'T_DOUBLE_CAST_1' => '(real)',
-                    'T_DOUBLE_CAST_2' => '(double)',
-                    'T_DOUBLE_CAST_3' => '(float)',
-                ], 'T_STRING')],
+                ['\(\s*\w+\s*\)', new EqualsChecker([
+                        'T_INT_CAST' => ['(int)', '(integer)'],
+                        'T_OBJECT_CAST' => '(object)',
+                        'T_STRING_CAST' => '(string)',
+                        'T_UNSET_CAST' => '(unset)',
+                        'T_ARRAY_CAST' => '(array)',
+                        'T_BOOL_CAST' => ['(bool)', '(boolean)'],
+                        'T_DOUBLE_CAST' => ['(real)', '(double)', '(float)'],
+                    ]
+                    ,'T_STRING'
+                    , function($value){
+                        return str_replace(' ', '',$value);
+                    }
+                )],
                 ['.+', new EqualsChecker([
                     'T_REQUIRE_ONCE' => 'require_once',
                     'T_INCLUDE_ONCE' => 'include_once',

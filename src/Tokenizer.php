@@ -13,10 +13,12 @@ use Tsukasa\PhpTokenizer\Checkers\CheckerInterface;
 class Tokenizer {
 
     /** @var RulesInterface  */
-    private $ruleset;
+    protected $ruleset;
 
     /** @var array */
-    private $map;
+    protected $map;
+
+    protected $_prepared;
 
     public function __construct(RulesInterface $rules)
     {
@@ -32,6 +34,10 @@ class Tokenizer {
 
     protected function constructRules($ruleset = null)
     {
+        if ($ruleset && isset($this->_prepared[$ruleset])) {
+            return $this->_prepared[$ruleset];
+        }
+
         $patterns = [];
         $types = [];
         $rules = [];
@@ -52,7 +58,7 @@ class Tokenizer {
                 : '__ANY__';
         }
 
-        return [
+        return $this->_prepared[$ruleset] = [
             '~(' . implode(')|(', $patterns) . ')~As',
             $types,
             $rules
