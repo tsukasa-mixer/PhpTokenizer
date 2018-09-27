@@ -156,8 +156,6 @@ class Rules implements RulesInterface {
 
 
     protected $map = [
-        'T_CONSTANT_ENCAPSED_STRING_1' => 'T_CONSTANT_ENCAPSED_STRING',
-        'T_CONSTANT_ENCAPSED_STRING_2' => 'T_CONSTANT_ENCAPSED_STRING',
         'T_OPEN_TAG_1' => 'T_OPEN_TAG',
         'T_OPEN_TAG_2' => 'T_OPEN_TAG',
     ];
@@ -166,7 +164,7 @@ class Rules implements RulesInterface {
     {
         $this->patterns = [
             'base' => [
-                [['\<\?.*?\?\>','\<\?.*?$'], 'php-tokens'],
+                [['\<\?.+?\?\>','\<\?.+?$'], 'php-tokens'],
                 'T_INLINE_HTML' => [['([\w\d\s]+)','.']],
             ],
             'php-tokens' => [
@@ -174,18 +172,9 @@ class Rules implements RulesInterface {
                 'T_OPEN_TAG_WITH_ECHO' => '\<\?\=',
                 'T_OPEN_TAG_2' => '\<\?',
                 'T_DOC_COMMENT' => '\/\*\*.+?\*\/',
-                'T_COMMENT' => '//.+\n',
+                'T_COMMENT' => [['//.+\n', ]],
                 'T_OBJECT_OPERATOR' => '\-\>',
                 'T_VARIABLE' => '\$\w[\w\d_]+',
-                'T_STRING' => ['\w[\w\d]+', 'php-T_STRING'],
-                'T_CONSTANT_ENCAPSED_STRING_2' => ['".*?"'],
-                'T_CONSTANT_ENCAPSED_STRING_1' => '\'.*?\'',
-                'T_WHITESPACE' => '[\t \r\n]+',
-                'T_CLOSE_TAG' => '\?\>',
-                '.',
-            ],
-
-            'php-T_STRING' => [
                 ['\(\s*\w+\s*\)', new EqualsChecker([
                         'T_INT_CAST' => ['(int)', '(integer)'],
                         'T_OBJECT_CAST' => '(object)',
@@ -200,12 +189,18 @@ class Rules implements RulesInterface {
                         return str_replace(' ', '',$value);
                     }
                 )],
-                ['.+', new EqualsChecker([
-                    'T_REQUIRE_ONCE' => 'require_once',
-                    'T_INCLUDE_ONCE' => 'include_once',
-                    'T_REQUIRE' => 'require',
-                    'T_INCLUDE' => 'include',
-                ], 'T_STRING')],
+
+                'T_STRING' => ['\w[\w\d]+', new EqualsChecker([
+                        'T_REQUIRE_ONCE' => 'require_once',
+                        'T_INCLUDE_ONCE' => 'include_once',
+                        'T_REQUIRE' => 'require',
+                        'T_INCLUDE' => 'include',
+                    ], 'T_STRING'
+                )],
+                'T_CONSTANT_ENCAPSED_STRING' => [['".*?"', '\'.*?\'']],
+                'T_WHITESPACE' => '[\t \r\n]+',
+                'T_CLOSE_TAG' => '\?\>',
+                '.',
             ],
         ];
     }
