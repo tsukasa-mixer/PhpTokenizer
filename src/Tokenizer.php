@@ -8,6 +8,8 @@
 
 namespace Tsukasa\PhpTokenizer;
 
+use Tsukasa\PhpTokenizer\Checkers\CheckerInterface;
+
 class Tokenizer {
 
     /** @var RulesInterface  */
@@ -22,31 +24,9 @@ class Tokenizer {
         $this->map = $rules->getMap();
     }
 
-    public function parse($content) {
-
-        $result = [];
-
-//        if (preg_match_all('/(\<\?(php|\=|)).*?(\?\>|$)/s', $content, $match)) {
-//
-//            $len = 0;
-//            foreach ($match[0] as $i => $code) {
-//                $str = $code;
-//                $len += strlen($str);
-//                list($line, $col) = self::getCoordinates($content, $len);
-//
-//                $result[] = $this->tokenize($code, $line);
-//            }
-//        }
-
-        $result = $this->tokenize($content);
-
-        return $result;
-
-        if (count($result) <= 1) {
-            return current($result);
-        }
-
-        return array_merge(...$result);
+    public function parse($content)
+    {
+        return $this->tokenize($content);
     }
 
 

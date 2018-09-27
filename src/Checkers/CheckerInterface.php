@@ -6,7 +6,7 @@
  * Time: 23:07
  */
 
-namespace Tsukasa\PhpTokenizer;
+namespace Tsukasa\PhpTokenizer\Checkers;
 
 interface CheckerInterface
 {

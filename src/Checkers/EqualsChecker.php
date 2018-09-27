@@ -6,7 +6,7 @@
  * Time: 22:49
  */
 
-namespace Tsukasa\PhpTokenizer;
+namespace Tsukasa\PhpTokenizer\Checkers;
 
 class EqualsChecker implements CheckerInterface
 {

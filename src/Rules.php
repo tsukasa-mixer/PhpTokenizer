@@ -8,6 +8,9 @@
 
 namespace Tsukasa\PhpTokenizer;
 
+use Tsukasa\PhpTokenizer\Checkers\CastEqualsChecker;
+use Tsukasa\PhpTokenizer\Checkers\EqualsChecker;
+
 class Rules implements RulesInterface {
 
     public $base_incorrect = [
@@ -176,30 +179,30 @@ class Rules implements RulesInterface {
         'T_CONSTANT_ENCAPSED_STRING_2' => 'T_CONSTANT_ENCAPSED_STRING',
         'T_OPEN_TAG_1' => 'T_OPEN_TAG',
         'T_OPEN_TAG_2' => 'T_OPEN_TAG',
+        'T_INT_CAST_1' => 'T_INT_CAST',
+        'T_INT_CAST_2' => 'T_INT_CAST',
+        'T_BOOL_CAST_1' => 'T_BOOL_CAST',
+        'T_BOOL_CAST_2' => 'T_BOOL_CAST',
+        'T_DOUBLE_CAST_1' => 'T_DOUBLE_CAST',
+        'T_DOUBLE_CAST_2' => 'T_DOUBLE_CAST',
+        'T_DOUBLE_CAST_3' => 'T_DOUBLE_CAST',
     ];
 
     public function __construct()
     {
         $this->patterns = [
             'base' => [
-                [Pattern::fabric('\<\?.*?\?\>'), 'php-tokens'],
-                [Pattern::fabric('\<\?.*?$'), 'php-tokens'],
-//            'T_INLINE_HTML' => '.',
-                '.'
+                ['\<\?.*?\?\>', 'php-tokens'],
+                ['\<\?.*?$', 'php-tokens'],
+                'T_INLINE_HTML' => ['.', ],
             ],
             'php-tokens' => [
-                'T_OPEN_TAG_1' => Pattern::fabric('\<\?php'),
-                'T_OPEN_TAG_WITH_ECHO' => Pattern::fabric('\<\?\='),
+                'T_OPEN_TAG_1' => '\<\?php',
+                'T_OPEN_TAG_WITH_ECHO' => '\<\?\=',
                 'T_OPEN_TAG_2' => '\<\?',
                 'T_OBJECT_OPERATOR' => '\-\>',
                 'T_VARIABLE' => '\$\w[\w\d_]+',
-                'T_STRING' => ['\w[\w\d]+', new EqualsChecker([
-                    'T_REQUIRE_ONCE' => 'require_once',
-                    'T_INCLUDE_ONCE' => 'include_once',
-                    'T_REQUIRE' => 'require',
-                    'T_INCLUDE' => 'include',
-                    ], 'T_STRING')
-                ],
+                'T_STRING' => ['\w[\w\d]+', 'php-T_STRING'],
                 'T_CONSTANT_ENCAPSED_STRING_2' => '".+"',
                 'T_CONSTANT_ENCAPSED_STRING_1' => '\'.+\'',
                 'T_WHITESPACE' => '[\t \r\n]+',
@@ -208,11 +211,26 @@ class Rules implements RulesInterface {
                 '.',
             ],
 
-            'php' => [
-                'T_REQUIRE_ONCE' => 'require_once',
-                'T_INCLUDE_ONCE' => 'include_once',
-                'T_REQUIRE' => 'require',
-                'T_INCLUDE' => 'include',
+            'php-T_STRING' => [
+                ['\(\s*\w+\s*\)', new CastEqualsChecker([
+                    'T_INT_CAST_1' => '(int)',
+                    'T_INT_CAST_2' => '(integer)',
+                    'T_OBJECT_CAST' => '(object)',
+                    'T_STRING_CAST' => '(string)',
+                    'T_UNSET_CAST' => '(unset)',
+                    'T_ARRAY_CAST' => '(unset)',
+                    'T_BOOL_CAST_1' => '(bool)',
+                    'T_BOOL_CAST_2' => '(boolean)',
+                    'T_DOUBLE_CAST_1' => '(real)',
+                    'T_DOUBLE_CAST_2' => '(double)',
+                    'T_DOUBLE_CAST_3' => '(float)',
+                ], 'T_STRING')],
+                ['.+', new EqualsChecker([
+                    'T_REQUIRE_ONCE' => 'require_once',
+                    'T_INCLUDE_ONCE' => 'include_once',
+                    'T_REQUIRE' => 'require',
+                    'T_INCLUDE' => 'include',
+                ], 'T_STRING')],
             ],
 
             'php_encapsed_string' => [
