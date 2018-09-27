@@ -2,6 +2,9 @@
     "name": "tsukasa/php-tokenizer",
     "description": "",
     "license": "MIT",
+    "config": {
+        "optimize-autoloader": true
+    },
     "require": {
       "roave/security-advisories": "dev-master",
       "ext-mbstring": "*"

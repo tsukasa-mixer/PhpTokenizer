@@ -23,37 +23,25 @@ function getPhpContent($content) {
 function getTokensNative($content) {
     $tokens = token_get_all($content);
 
-    foreach ($tokens as $k => $v) {
-        if (is_array($v)) {
-            $tokens[$k][] = token_name($v[0]);
-        }
-    }
+//    foreach ($tokens as $k => $v) {
+//        if (is_array($v)) {
+//            $tokens[$k][] = token_name($v[0]);
+//        }
+//    }
     return $tokens;
 }
 
-function gettesttokens($content) {
+$time1 = microtime(true);
+$c1 = getPhpContent($content);
+$time1 = microtime(true) - $time1;
+$time1 *= 100;
 
-    if (preg_match_all('/(\<\?(php|\=|)).*?(\?\>|$)/s', $content, $match)) {
+$time2 = microtime(true);
+$c2 = getTokensNative($content);
+$time2 = microtime(true) - $time2;
+$time2 *= 100;
 
-        foreach ($match[0] as $i => $code) {
+print_r($c1);
 
-            if (preg_match_all('~' .(new Rules())->getTokensPattern() . '~As', $code, $tokens, PREG_SET_ORDER)) {
-
-                print_r($tokens);
-                die();
-            }
-
-
-            print_r($code);
-            die();
-
-        }
-
-    }
-
-}
-
-//print_r(gettesttokens($content));
-
-print_r(getPhpContent($content));
-//print_r(getTokensNative($content));
+echo "getPhpContent - {$time1}\n";
+echo "getTokensNative - {$time2}\n";
