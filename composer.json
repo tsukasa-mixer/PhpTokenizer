@@ -1,13 +1,14 @@
 {
     "name": "tsukasa/php-tokenizer",
-    "description": "",
+    "description": "Polyfill for php extension Tokenizer",
     "license": "MIT",
     "config": {
         "optimize-autoloader": true
     },
     "require": {
       "roave/security-advisories": "dev-master",
-      "ext-mbstring": "*"
+      "ext-mbstring": "*",
+      "php": "^5.4"
     },
     "type": "library",
     "autoload": {
@@ -15,7 +16,7 @@
             "Tsukasa\\PhpTokenizer\\": "src/"
         },
         "files": [
-            "src/tokenizer_polyfill.php"
+            "src/polyfill_tokenizer.php"
         ]
     }
 }
