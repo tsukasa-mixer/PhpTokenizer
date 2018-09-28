@@ -161,7 +161,7 @@ class Helper
     public static function registerConstants()
     {
         foreach (self::$constants as $constant => $val) {
-            !defined($constant) ?: define($constant, $val);
+            defined($constant) ?: define($constant, $val);
         }
     }
 
