@@ -67,7 +67,7 @@ class Tokenizer {
         }
 
         return $this->_prepared[$ruleset] = [
-            '~(' . implode(')|(', $patterns) . ')~As',
+            '~(' . implode(')|(', $patterns) . ')~Aus',
             $types,
             $rules
         ];
@@ -98,7 +98,7 @@ class Tokenizer {
             }
 
             $str = $token[0];
-            $len += strlen($str);
+            $len += mb_strlen($str);
             list($line, $col) = static::getCoordinates($input, $len);
 
             $line += $start_line;
@@ -125,7 +125,10 @@ class Tokenizer {
         if ($len !== strlen($input)) {
 
             list($line, $col) = static::getCoordinates($input, $len);
-            $token = str_replace("\n", '\n', substr($input, $len, 10));
+            $token = str_replace(
+                ["\n", "\r"], ['\n', '\r'],
+                mb_substr($input, $len, 10)
+            );
             throw new \RuntimeException("Unexpected '$token' on line $line, column $col.");
         }
         return array_merge(...$result);
@@ -140,7 +143,10 @@ class Tokenizer {
      */
     public static function getCoordinates($text, $offset)
     {
-        $text = substr($text, 0, $offset);
-        return [substr_count($text, "\n") + 1, $offset - strrpos("\n" . $text, "\n") + 1];
+        $text = mb_substr($text, 0, $offset);
+        return [
+            mb_substr_count($text, "\n") + 1,
+            $offset - mb_strrpos("\n" . $text, "\n") + 1
+        ];
     }
 }
