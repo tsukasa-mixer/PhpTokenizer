@@ -33,12 +33,13 @@ if (!extension_loaded('Tokenizer')) {
     function token_get_all($source, $flags = 0)
     {
         static $tokenizer;
-        trigger_error('Extension Tokenizer is disabled, used polyfill', E_USER_NOTICE);
 
         if (!$tokenizer) {
             $tokenizer = new \Tsukasa\PhpTokenizer\Tokenizer(
                 new \Tsukasa\PhpTokenizer\Rules()
             );
+            
+            trigger_error('Extension Tokenizer is disabled, used polyfill', E_USER_NOTICE);
         }
 
         return $tokenizer->parse($source);
@@ -58,8 +59,6 @@ if (!extension_loaded('Tokenizer')) {
      */
     function token_name($token)
     {
-        trigger_error('Extension Tokenizer is disabled, used polyfill', E_USER_NOTICE);
-
         return \Tsukasa\PhpTokenizer\Helper::getConstantName($token);
     }
 
