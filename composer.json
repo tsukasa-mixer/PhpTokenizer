@@ -6,7 +6,6 @@
         "optimize-autoloader": true
     },
     "require": {
-      "roave/security-advisories": "dev-master",
       "ext-mbstring": "*",
       "php": ">=5.6"
     },
